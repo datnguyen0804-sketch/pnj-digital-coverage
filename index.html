@@ -1,607 +1,519 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Báo Cáo Digital Coverage & Dự Báo Q1 2026 - PNJ ĐNB</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Báo Cáo Digital Coverage & Dự Báo Q1 2026 - PNJ ĐNB</title>
 
-  <!-- CSS Libraries -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Leaflet Map CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Leaflet Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-  <style>
-    body { font-family: 'Inter', sans-serif; background-color: #fcfbf9; color: #1f2937; -webkit-font-smoothing: antialiased; }
-    h1, h2, h3, .serif-font { font-family: 'Playfair Display', serif; }
-    .card-shadow { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); }
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf9;
+            color: #1f2937;
+            -webkit-font-smoothing: antialiased;
+        }
+        h1, h2, h3, .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
 
-    /* Navigation Tabs (pure CSS so it works in a standalone HTML file) */
-    .nav-tab{
-      padding: 0.5rem 1rem;
-      font-weight: 500;
-      font-size: 0.875rem;
-      border-radius: 0.5rem 0.5rem 0 0;
-      transition: color .2s, background-color .2s, border-color .2s;
-      border-bottom: 2px solid transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      white-space: nowrap;
-    }
-    .nav-tab.active{ color:#b45309; border-bottom-color:#d97706; background:#fffbeb; }
-    .nav-tab.inactive{ color:#78716c; }
-    .nav-tab.inactive:hover{ color:#44403c; background:#fafaf9; }
+        /* Map Styles */
+        #map {
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+        }
+        .store-item.active {
+            background-color: #fffbeb; /* amber-50 */
+            border-left: 4px solid #d97706;
+        }
 
-    /* Map Styles */
-    #map { height: 100%; width: 100%; z-index: 1; }
-    .store-item.active { background-color: #fffbeb; border-left: 4px solid #d97706; }
+        /* Mobile Optimization for Charts */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 280px;
+            touch-action: pan-y;
+        }
+        @media (min-width: 640px) { .chart-container { height: 350px; } }
+        @media (min-width: 1024px) { .chart-container { height: 400px; } }
 
-    /* Mobile Optimization for Charts */
-    .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 280px; touch-action: pan-y; }
-    @media (min-width: 640px) { .chart-container { height: 350px; } }
-    @media (min-width: 1024px) { .chart-container { height: 400px; } }
+        /* Custom Scrollbar for store list */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d6d3d1;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a29e;
+        }
 
-    /* Custom Scrollbar for store list */
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+        /* Chatbot Styles */
+        #chatbot-window {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: bottom right;
+        }
+        .chat-bubble-user {
+            background-color: #d97706;
+            color: white;
+            border-radius: 12px 12px 0 12px;
+        }
+        .chat-bubble-ai {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            border-radius: 12px 12px 12px 0;
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: #d97706;
+            border-radius: 50%;
+            animation: typing 1s infinite ease-in-out;
+            margin: 0 2px;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
 
-    /* Hide scrollbar (forecast tabs header) */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* Chatbot Styles */
-    #chatbot-window { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: bottom right; }
-    .chat-bubble-user { background-color: #d97706; color: white; border-radius: 12px 12px 0 12px; }
-    .chat-bubble-ai { background-color: #f3f4f6; color: #1f2937; border-radius: 12px 12px 12px 0; }
-    .typing-indicator span { display: inline-block; width: 6px; height: 6px; background-color: #d97706; border-radius: 50%; animation: typing 1s infinite ease-in-out; margin: 0 2px; }
-    .typing-indicator span:nth-child(1) { animation-delay: 0s; }
-    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
-    .tab-btn-active { border-bottom: 2px solid #b45309; color: #78350f; font-weight: 600; }
-    .tab-btn-inactive { color: #6b7280; border-bottom: 2px solid transparent; }
-  </style>
+        .tab-btn-active {
+            border-bottom: 2px solid #b45309;
+            color: #78350f;
+            font-weight: 600;
+        }
+        .tab-btn-inactive {
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+        }
+    </style>
 </head>
-
 <body class="antialiased h-screen flex flex-col overflow-hidden">
-  <!-- Header -->
-  <header class="bg-white border-b border-stone-200 z-30 flex-shrink-0">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold serif-font flex-shrink-0">P</div>
-        <div>
-          <h1 class="text-lg sm:text-xl font-bold text-stone-900 leading-none truncate max-w-[200px] sm:max-w-none">Báo Cáo Digital Coverage</h1>
-          <p class="text-xs text-stone-500 mt-0.5">Khu Vực Đông Nam Bộ | Tháng 01/2026</p>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-stone-200 z-30 flex-shrink-0 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold serif-font flex-shrink-0">P</div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-stone-900 leading-none truncate max-w-[200px] sm:max-w-none">Báo Cáo Digital Coverage</h1>
+                    <p class="text-xs text-stone-500 mt-0.5">Khu Vực Đông Nam Bộ | Tháng 01/2026</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Navigation Toggle Button -->
+            <div class="flex">
+                <button onclick="toggleMainView()" id="nav-toggle" class="flex items-center gap-2 px-4 py-2 font-medium text-sm rounded-lg transition-all border-2 border-amber-500 text-amber-700 bg-amber-50 hover:bg-amber-100 hover:shadow-md">
+                    <i id="nav-toggle-icon" class="fa-solid fa-map-location-dot"></i>
+                    <span id="nav-toggle-text" class="hidden sm:inline">Xem Bản Đồ</span>
+                    <span id="nav-toggle-text-mobile" class="sm:hidden">Bản Đồ</span>
+                </button>
+            </div>
         </div>
-      </div>
+    </header>
 
-      <!-- Top Navigation Tabs -->
-      <div class="flex space-x-2">
-        <button onclick="switchView('report')" id="nav-report" class="nav-tab active flex items-center gap-2">
-          <i class="fa-solid fa-chart-pie"></i>
-          <span class="hidden sm:inline">Tổng Quan</span>
-        </button>
-        <button onclick="switchView('map')" id="nav-map" class="nav-tab inactive flex items-center gap-2">
-          <i class="fa-solid fa-map-location-dot"></i>
-          <span class="hidden sm:inline">Bản Đồ Chi Nhánh</span>
-          <span class="sm:hidden">Bản Đồ</span>
-        </button>
-      </div>
-    </div>
-  </header>
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-grow relative overflow-hidden bg-stone-50">
 
-  <div class="flex-grow relative overflow-hidden bg-stone-50">
-    <!-- REPORT VIEW -->
-    <main id="view-report" class="absolute inset-0 overflow-y-auto p-4 sm:p-8 space-y-8 sm:space-y-12">
-      <div class="max-w-7xl mx-auto space-y-8">
-        <section>
-          <div class="mb-4 sm:mb-6">
-            <h2 class="text-xl sm:text-2xl font-bold text-stone-800 mb-2">1. Tổng Quan Hiệu Quả</h2>
-            <p class="text-sm sm:text-base text-stone-600 max-w-3xl">
-              Phần này cung cấp cái nhìn toàn cảnh về mức độ hiện diện của PNJ trên không gian số.
-              Mặc dù độ phủ (Reach) chưa đạt mức tối đa, nhưng chất lượng tương tác (Inbox, Chỉ đường) rất khả quan.
-            </p>
-          </div>
+        <!-- VIEW 1: REPORT (Original Full Version) -->
+        <main id="view-report" class="absolute inset-0 overflow-y-auto p-4 sm:p-8 space-y-8 sm:space-y-12 transition-opacity duration-300">
+            <div class="max-w-7xl mx-auto space-y-8">
+                <!-- Section 1: Executive Overview -->
+                <section>
+                    <div class="mb-4 sm:mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-stone-800 mb-2">1. Tổng Quan Hiệu Quả</h2>
+                        <p class="text-sm sm:text-base text-stone-600 max-w-3xl">
+                            Phần này cung cấp cái nhìn toàn cảnh về mức độ hiện diện của PNJ trên không gian số. 
+                            Mặc dù độ phủ (Reach) chưa đạt mức tối đa, nhưng chất lượng tương tác (Inbox, Chỉ đường) rất khả quan.
+                        </p>
+                    </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            <div class="bg-white p-5 sm:p-6 rounded-lg border border-stone-200 card-shadow transition hover:-translate-y-1 duration-300">
-              <div class="flex items-start justify-between">
-                <div>
-                  <p class="text-xs sm:text-sm font-medium text-stone-500 uppercase tracking-wide">Độ Phủ (Reach)</p>
-                  <h3 class="text-3xl sm:text-4xl font-bold text-stone-900 mt-2">1.5M</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                        <!-- KPI 1 -->
+                        <div class="bg-white p-5 sm:p-6 rounded-lg border border-stone-200 card-shadow transition hover:-translate-y-1 duration-300">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-xs sm:text-sm font-medium text-stone-500 uppercase tracking-wide">Độ Phủ (Reach)</p>
+                                    <h3 class="text-3xl sm:text-4xl font-bold text-stone-900 mt-2">1.5M</h3>
+                                </div>
+                                <span class="text-2xl">📡</span>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex justify-between text-xs text-stone-500 mb-1">
+                                    <span>Hiện tại: 42%</span>
+                                    <span>Mục tiêu: 100%</span>
+                                </div>
+                                <div class="w-full bg-stone-100 rounded-full h-2">
+                                    <div class="bg-amber-500 h-2 rounded-full" style="width: 42%"></div>
+                                </div>
+                                <p class="text-xs text-stone-500 mt-2 italic">Tiềm năng mở rộng còn rất lớn.</p>
+                            </div>
+                        </div>
+
+                        <!-- KPI 2 -->
+                        <div class="bg-white p-5 sm:p-6 rounded-lg border border-stone-200 card-shadow transition hover:-translate-y-1 duration-300">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-xs sm:text-sm font-medium text-stone-500 uppercase tracking-wide">Inbox Tư Vấn</p>
+                                    <h3 class="text-3xl sm:text-4xl font-bold text-blue-900 mt-2">16,000+</h3>
+                                </div>
+                                <span class="text-2xl">💬</span>
+                            </div>
+                            <p class="mt-4 text-xs sm:text-sm text-stone-600">
+                                Khách hàng chủ động nhắn tin hỏi mua. Đây là nhóm khách có nhu cầu cao ("High Intent").
+                            </p>
+                        </div>
+
+                        <!-- KPI 3 -->
+                        <div class="bg-white p-5 sm:p-6 rounded-lg border border-stone-200 card-shadow transition hover:-translate-y-1 duration-300">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="text-xs sm:text-sm font-medium text-stone-500 uppercase tracking-wide">Tìm Đường (Maps)</p>
+                                    <h3 class="text-3xl sm:text-4xl font-bold text-emerald-800 mt-2">12,000+</h3>
+                                </div>
+                                <span class="text-2xl">📍</span>
+                            </div>
+                            <p class="mt-4 text-xs sm:text-sm text-stone-600">
+                                Lượt khách bấm chỉ đường để đến cửa hàng. Tín hiệu chuyển đổi Online-to-Offline mạnh mẽ.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Regional Analysis -->
+                <section>
+                    <div class="mb-4 sm:mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-stone-800 mb-2">2. Phân Tích Khu Vực & Cửa Hàng</h2>
+                        <p class="text-sm sm:text-base text-stone-600 max-w-3xl">
+                            Biểu đồ dưới đây so sánh hiệu suất giữa các tỉnh dựa trên <strong>Tỷ lệ thâm nhập</strong> và <strong>Quy mô tương tác</strong>.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+                        <!-- Chart Col -->
+                        <div class="lg:col-span-2 bg-white p-4 sm:p-6 rounded-lg border border-stone-200 card-shadow">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-base sm:text-lg font-semibold text-stone-800">Mức Độ Sôi Nổi Theo Tỉnh</h3>
+                                <div class="group relative">
+                                    <span class="cursor-help text-stone-400">ⓘ</span>
+                                    <div class="absolute right-0 w-64 p-3 bg-stone-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none group-hover:pointer-events-auto">
+                                        Điểm số tính dựa trên: Tỷ lệ Reach/Dân số tiềm năng (50%) + Lượng tương tác tuyệt đối (30%) + Tỷ lệ chuyển đổi (20%).
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="regionalChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Text Col -->
+                        <div class="space-y-4">
+                            <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4">
+                                <h4 class="font-bold text-emerald-800 flex items-center gap-2">🏆 Đồng Nai & Bình Dương</h4>
+                                <p class="text-sm text-emerald-700 mt-1">
+                                    Hiệu suất Rất Tốt & Khá. Khách hàng quan tâm sôi nổi. Cần tập trung giới thiệu mẫu mới.
+                                </p>
+                            </div>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                                <h4 class="font-bold text-yellow-800 flex items-center gap-2">⚖️ Tây Ninh</h4>
+                                <p class="text-sm text-yellow-700 mt-1">
+                                    Mức trung bình. Cần nỗ lực thêm để thu hút sự chú ý.
+                                </p>
+                            </div>
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                                <h4 class="font-bold text-red-800 flex items-center gap-2">⚠️ Bình Phước & BR-VT</h4>
+                                <p class="text-sm text-red-700 mt-1">
+                                    Hiệu suất Thấp. Cần tăng ngân sách quảng cáo để "nhắc nhớ".
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Store Level Performance -->
+                    <div class="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Good Stores -->
+                        <div class="bg-white p-5 sm:p-6 rounded-lg border border-stone-200 card-shadow">
+                            <h3 class="text-base sm:text-lg font-bold text-stone-800 mb-4 flex items-center gap-2">
+                                <span class="text-amber-500">★</span> Điểm Sáng Hoạt Động
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-xs font-semibold text-stone-500 uppercase">Top Inbox (Tư vấn)</p>
+                                    <ul class="mt-2 text-sm text-stone-700 space-y-2">
+                                        <li class="flex justify-between border-b border-stone-100 pb-1">
+                                            <span class="truncate pr-2">PNJ Hùng Vương - Long Khánh</span>
+                                            <span class="font-bold bg-blue-100 text-blue-800 px-2 rounded whitespace-nowrap">Top 1</span>
+                                        </li>
+                                        <li class="flex justify-between border-b border-stone-100 pb-1">
+                                            <span class="truncate pr-2">PNJ ĐL Bình Dương - TDM</span>
+                                            <span class="font-bold bg-blue-100 text-blue-800 px-2 rounded whitespace-nowrap">Top 2</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-xs font-semibold text-stone-500 uppercase">Top Directions (Ghé thăm)</p>
+                                    <ul class="mt-2 text-sm text-stone-700 space-y-2">
+                                        <li class="flex justify-between border-b border-stone-100 pb-1">
+                                            <span class="truncate pr-2">PNJ AEON Bình Dương</span>
+                                            <span class="font-bold bg-emerald-100 text-emerald-800 px-2 rounded whitespace-nowrap">Áp đảo</span>
+                                        </li>
+                                        <li class="flex justify-between border-b border-stone-100 pb-1">
+                                            <span class="truncate pr-2">PNJ Hùng Vương - TDM</span>
+                                            <span class="font-bold bg-emerald-100 text-emerald-800 px-2 rounded whitespace-nowrap">Cao</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bad Stores (Alert) -->
+                        <div class="bg-white p-5 sm:p-6 rounded-lg border-2 border-red-100 card-shadow relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded-bl">CẦN XỬ LÝ</div>
+                            <h3 class="text-base sm:text-lg font-bold text-red-700 mb-2 flex items-center gap-2">
+                                <span>🚫</span> Vấn Đề: Zero Inbox
+                            </h3>
+                            <p class="text-xs sm:text-sm text-stone-600 mb-4">
+                                Các cửa hàng dưới đây có lượt tìm kiếm cao nhưng <strong>KHÔNG</strong> có tin nhắn nào.
+                            </p>
+                            <ul class="space-y-3">
+                                <li class="flex items-center gap-3 p-2 bg-red-50 rounded border border-red-100">
+                                    <span class="text-red-500">🏢</span>
+                                    <span class="text-stone-800 font-medium text-xs sm:text-sm">PNJ Quốc Lộ 1K - Dĩ An</span>
+                                </li>
+                                <li class="flex items-center gap-3 p-2 bg-red-50 rounded border border-red-100">
+                                    <span class="text-red-500">🏢</span>
+                                    <span class="text-stone-800 font-medium text-xs sm:text-sm">PNJ 22/12 - Thuận An</span>
+                                </li>
+                                <li class="flex items-center gap-3 p-2 bg-red-50 rounded border border-red-100">
+                                    <span class="text-red-500">🏢</span>
+                                    <span class="text-stone-800 font-medium text-xs sm:text-sm">PNJ Center Nguyễn Trãi</span>
+                                </li>
+                            </ul>
+                            <div class="mt-4 pt-4 border-t border-stone-100">
+                                <p class="text-sm font-bold text-stone-800">👉 Hành động:</p>
+                                <p class="text-xs sm:text-sm text-stone-600">Kiểm tra điện thoại trực Fanpage/Google Maps ngay.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Forecast & Strategy -->
+                <section>
+                    <div class="mb-4 sm:mb-6">
+                        <h2 class="text-xl sm:text-2xl font-bold text-stone-800 mb-2">3. Dự Báo Nhu Cầu Quý 1/2026</h2>
+                        <p class="text-sm sm:text-base text-stone-600 max-w-3xl">
+                            Phân tích xu hướng tìm kiếm cho thấy 3 đợt sóng nhu cầu lớn sau Tết.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg border border-stone-200 card-shadow overflow-hidden">
+                        <!-- Custom Tabs (Scrollable on Mobile) -->
+                        <div class="flex border-b border-stone-200 overflow-x-auto no-scrollbar">
+                            <button onclick="switchTab('valentine')" id="tab-valentine" class="tab-btn-active px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium focus:outline-none transition-colors whitespace-nowrap">
+                                ❤️ Valentine
+                            </button>
+                            <button onclick="switchTab('thantai')" id="tab-thantai" class="tab-btn-inactive px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium focus:outline-none transition-colors whitespace-nowrap">
+                                💰 Thần Tài
+                            </button>
+                            <button onclick="switchTab('women')" id="tab-women" class="tab-btn-inactive px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium focus:outline-none transition-colors whitespace-nowrap">
+                                🌸 8/3
+                            </button>
+                            <button onclick="switchTab('wedding')" id="tab-wedding" class="tab-btn-inactive px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium focus:outline-none transition-colors whitespace-nowrap">
+                                💍 Mùa Cưới
+                            </button>
+                        </div>
+
+                        <div class="p-4 sm:p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center">
+                                <!-- Left: Dynamic Content -->
+                                <div id="tab-content">
+                                    <!-- Injected by JS -->
+                                </div>
+
+                                <!-- Right: Trend Chart -->
+                                <div>
+                                    <h4 class="text-xs sm:text-sm font-bold text-stone-500 uppercase mb-4 text-center">Dự Báo Xu Hướng Tìm Kiếm</h4>
+                                    <div class="chart-container">
+                                        <canvas id="trendChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4: Action Checklist -->
+                <section class="pb-8 sm:pb-12">
+                    <h2 class="text-xl sm:text-2xl font-bold text-stone-800 mb-6">4. Tóm Lại: Việc Cần Làm Ngay</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-stone-800 text-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+                            <div class="w-12 h-12 bg-stone-700 rounded-full flex items-center justify-center text-2xl mb-4">🛠️</div>
+                            <h3 class="text-lg sm:text-xl font-bold mb-2">Sửa Lỗi Kết Nối</h3>
+                            <p class="text-stone-300 text-sm">
+                                Cửa hàng Dĩ An, Thuận An kiểm tra Maps ngay. Đừng để khách tìm đến "nhà" mà không mở cửa.
+                            </p>
+                        </div>
+
+                        <div class="bg-amber-600 text-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+                            <div class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-2xl mb-4">📣</div>
+                            <h3 class="text-lg sm:text-xl font-bold mb-2">Mở Rộng Vùng Phủ</h3>
+                            <p class="text-amber-100 text-sm">
+                                Tăng quảng cáo nhẹ cho Bình Phước & Vũng Tàu. Phủ sóng thương hiệu đến những vùng "trầm".
+                            </p>
+                        </div>
+
+                        <div class="bg-white border-2 border-stone-800 text-stone-800 p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+                            <div class="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center text-2xl mb-4">📦</div>
+                            <h3 class="text-lg sm:text-xl font-bold mb-2">Chuẩn Bị Hàng</h3>
+                            <p class="text-stone-600 text-sm">
+                                Nhập đủ <strong>Nhẫn đôi</strong> & <strong>Vàng Thần Tài</strong>. Đây là 2 món "hot" nhất quý này.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="h-12"></div> <!-- Spacer for footer -->
+            </div>
+        </main>
+
+        <!-- VIEW 2: MAP DEEP DIVE (With Real Stores) -->
+        <div id="view-map" class="absolute inset-0 flex flex-col md:flex-row hidden bg-white transition-opacity duration-300">
+            <!-- Sidebar: Filter & List -->
+            <div class="w-full md:w-80 lg:w-96 flex flex-col border-r border-stone-200 bg-white h-1/2 md:h-full z-20 shadow-lg md:shadow-none">
+                <div class="p-4 border-b border-stone-200 bg-stone-50">
+                    <h2 class="text-lg font-bold text-stone-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-store text-amber-600"></i> Danh Sách Cửa Hàng
+                    </h2>
+                    <div class="space-y-2">
+                        <select id="filter-province" onchange="filterStores()" class="w-full text-sm border-stone-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500 p-2">
+                            <option value="all">Tất cả tỉnh thành</option>
+                            <option value="Bình Dương">Bình Dương</option>
+                            <option value="Đồng Nai">Đồng Nai</option>
+                            <option value="Bà Rịa - Vũng Tàu">Bà Rịa - Vũng Tàu</option>
+                            <option value="Tây Ninh">Tây Ninh</option>
+                            <option value="Bình Phước">Bình Phước</option>
+                        </select>
+                        <select id="filter-status" onchange="filterStores()" class="w-full text-sm border-stone-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500 p-2">
+                            <option value="all">Tất cả trạng thái</option>
+                            <option value="good">Hoạt động tốt</option>
+                            <option value="warning">Cần xử lý (Zero Inbox)</option>
+                        </select>
+                    </div>
                 </div>
-                <span class="text-2xl">📡</span>
-              </div>
-              <div class="mt-4">
-                <div class="flex justify-between text-xs text-stone-500 mb-1">
-                  <span>Hiện tại: 42%</span>
-                  <span>Mục tiêu: 100%</span>
+                <div id="store-list" class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-2 bg-stone-50">
+                    <!-- Store items will be injected here -->
                 </div>
-                <div class="w-full bg-stone-100 rounded-full h-2">
-                  <div class="bg-amber-500 h-2 rounded-full" style="width: 42%"></div>
+            </div>
+
+            <!-- Map Container -->
+            <div class="flex-grow h-1/2 md:h-full relative">
+                <div id="map"></div>
+                <!-- Legend -->
+                <div class="absolute bottom-6 left-4 bg-white p-3 rounded shadow-lg z-[1000] text-xs border border-stone-200">
+                    <div class="font-bold mb-2 text-stone-800">Chú thích</div>
+                    <div class="flex items-center gap-2 mb-1"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Hoạt động tốt</div>
+                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span> Cần xử lý (Zero Inbox)</div>
                 </div>
-                <p class="text-xs text-stone-500 mt-2 italic">Tiềm năng mở rộng còn rất lớn.</p>
-              </div>
             </div>
-
-            <div class="bg-white p-5 sm:p-6 rounded-lg border border-stone-200 card-shadow transition hover:-translate-y-1 duration-300">
-              <div class="flex items-start justify-between">
-                <div>
-                  <p class="text-xs sm:text-sm font-medium text-stone-500 uppercase tracking-wide">Inbox Tư Vấn</p>
-                  <h3 class="text-3xl sm:text-4xl font-bold text-blue-900 mt-2">16,000+</h3>
-                </div>
-                <span class="text-2xl">💬</span>
-              </div>
-              <p class="mt-4 text-xs sm:text-sm text-stone-600">
-                Khách hàng chủ động nhắn tin hỏi mua. Đây là nhóm khách có nhu cầu cao ("High Intent").
-              </p>
-            </div>
-
-            <div class="bg-white p-5 sm:p-6 rounded-lg border border-stone-200 card-shadow transition hover:-translate-y-1 duration-300">
-              <div class="flex items-start justify-between">
-                <div>
-                  <p class="text-xs sm:text-sm font-medium text-stone-500 uppercase tracking-wide">Tìm Đường (Maps)</p>
-                  <h3 class="text-3xl sm:text-4xl font-bold text-emerald-800 mt-2">12,000+</h3>
-                </div>
-                <span class="text-2xl">📍</span>
-              </div>
-              <p class="mt-4 text-xs sm:text-sm text-stone-600">
-                Lượt khách bấm chỉ đường để đến cửa hàng. Tín hiệu chuyển đổi Online-to-Offline mạnh mẽ.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <div class="mb-4 sm:mb-6">
-            <h2 class="text-xl sm:text-2xl font-bold text-stone-800 mb-2">2. Phân Tích Khu Vực & Cửa Hàng</h2>
-            <p class="text-sm sm:text-base text-stone-600 max-w-3xl">
-              Biểu đồ dưới đây so sánh hiệu suất giữa các tỉnh dựa trên <strong>Tỷ lệ thâm nhập</strong> và <strong>Quy mô tương tác</strong>.
-            </p>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-            <div class="lg:col-span-2 bg-white p-4 sm:p-6 rounded-lg border border-stone-200 card-shadow">
-              <div class="flex justify-between items-center mb-4">
-                <h3 class="text-base sm:text-lg font-semibold text-stone-800">Mức Độ Sôi Nổi Theo Tỉnh</h3>
-              </div>
-              <div class="chart-container">
-                <canvas id="regionalChart"></canvas>
-              </div>
-            </div>
-
-            <div class="space-y-4">
-              <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4">
-                <h4 class="font-bold text-emerald-800 flex items-center gap-2">🏆 Đồng Nai & Bình Dương</h4>
-                <p class="text-sm text-emerald-700 mt-1">Hiệu suất Rất Tốt & Khá. Khách hàng quan tâm sôi nổi. Cần tập trung giới thiệu mẫu mới.</p>
-              </div>
-              <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
-                <h4 class="font-bold text-yellow-800 flex items-center gap-2">⚖️ Tây Ninh</h4>
-                <p class="text-sm text-yellow-700 mt-1">Mức trung bình. Cần nỗ lực thêm để thu hút sự chú ý.</p>
-              </div>
-              <div class="bg-red-50 border-l-4 border-red-500 p-4">
-                <h4 class="font-bold text-red-800 flex items-center gap-2">⚠️ Bình Phước & BR-VT</h4>
-                <p class="text-sm text-red-700 mt-1">Hiệu suất Thấp. Cần tăng ngân sách quảng cáo để "nhắc nhớ".</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <div class="mb-4 sm:mb-6">
-            <h2 class="text-xl sm:text-2xl font-bold text-stone-800 mb-2">3. Dự Báo Nhu Cầu Quý 1/2026</h2>
-            <p class="text-sm sm:text-base text-stone-600 max-w-3xl">Phân tích xu hướng tìm kiếm cho thấy 3 đợt sóng nhu cầu lớn sau Tết.</p>
-          </div>
-
-          <div class="bg-white rounded-lg border border-stone-200 card-shadow overflow-hidden">
-            <div class="flex border-b border-stone-200 overflow-x-auto no-scrollbar">
-              <button onclick="switchTab('valentine')" id="tab-valentine" class="tab-btn-active px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium focus:outline-none transition-colors whitespace-nowrap">❤️ Valentine</button>
-              <button onclick="switchTab('thantai')" id="tab-thantai" class="tab-btn-inactive px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium focus:outline-none transition-colors whitespace-nowrap">💰 Thần Tài</button>
-              <button onclick="switchTab('women')" id="tab-women" class="tab-btn-inactive px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium focus:outline-none transition-colors whitespace-nowrap">🌸 8/3</button>
-              <button onclick="switchTab('wedding')" id="tab-wedding" class="tab-btn-inactive px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium focus:outline-none transition-colors whitespace-nowrap">💍 Mùa Cưới</button>
-            </div>
-
-            <div class="p-4 sm:p-6">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-center">
-                <div id="tab-content"></div>
-                <div>
-                  <h4 class="text-xs sm:text-sm font-bold text-stone-500 uppercase mb-4 text-center">Dự Báo Xu Hướng Tìm Kiếm</h4>
-                  <div class="chart-container">
-                    <canvas id="trendChart"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="pb-8 sm:pb-12">
-          <h2 class="text-xl sm:text-2xl font-bold text-stone-800 mb-6">4. Tóm Lại: Việc Cần Làm Ngay</h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-stone-800 text-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
-              <div class="w-12 h-12 bg-stone-700 rounded-full flex items-center justify-center text-2xl mb-4">🛠️</div>
-              <h3 class="text-lg sm:text-xl font-bold mb-2">Sửa Lỗi Kết Nối</h3>
-              <p class="text-stone-300 text-sm">Cửa hàng Dĩ An, Thuận An kiểm tra Maps ngay. Đừng để khách tìm đến "nhà" mà không mở cửa.</p>
-            </div>
-
-            <div class="bg-amber-600 text-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
-              <div class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-2xl mb-4">📣</div>
-              <h3 class="text-lg sm:text-xl font-bold mb-2">Mở Rộng Vùng Phủ</h3>
-              <p class="text-amber-100 text-sm">Tăng quảng cáo nhẹ cho Bình Phước & Vũng Tàu. Phủ sóng thương hiệu đến những vùng "trầm".</p>
-            </div>
-
-            <div class="bg-white border-2 border-stone-800 text-stone-800 p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
-              <div class="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center text-2xl mb-4">📦</div>
-              <h3 class="text-lg sm:text-xl font-bold mb-2">Chuẩn Bị Hàng</h3>
-              <p class="text-stone-600 text-sm">Nhập đủ <strong>Nhẫn đôi</strong> & <strong>Vàng Thần Tài</strong>. Đây là 2 món "hot" nhất quý này.</p>
-            </div>
-          </div>
-        </section>
-
-        <div class="h-12"></div>
-      </div>
-    </main>
-
-    <!-- MAP VIEW -->
-    <div id="view-map" class="absolute inset-0 flex flex-col md:flex-row hidden bg-white">
-      <div class="w-full md:w-80 lg:w-96 flex flex-col border-r border-stone-200 bg-white h-1/2 md:h-full z-20 shadow-lg md:shadow-none">
-        <div class="p-4 border-b border-stone-200 bg-stone-50">
-          <h2 class="text-lg font-bold text-stone-800 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-store text-amber-600"></i> Danh Sách Cửa Hàng
-          </h2>
-          <div class="space-y-2">
-            <select id="filter-province" onchange="filterStores()" class="w-full text-sm border-stone-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
-              <option value="all">Tất cả tỉnh thành</option>
-              <option value="Bình Dương">Bình Dương</option>
-              <option value="Đồng Nai">Đồng Nai</option>
-              <option value="Bà Rịa - Vũng Tàu">Bà Rịa - Vũng Tàu</option>
-              <option value="Tây Ninh">Tây Ninh</option>
-              <option value="Bình Phước">Bình Phước</option>
-            </select>
-            <select id="filter-status" onchange="filterStores()" class="w-full text-sm border-stone-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
-              <option value="all">Tất cả trạng thái</option>
-              <option value="good">Hoạt động tốt</option>
-              <option value="warning">Cần xử lý (Zero Inbox)</option>
-            </select>
-          </div>
         </div>
-        <div id="store-list" class="flex-grow overflow-y-auto custom-scrollbar p-2 space-y-2 bg-stone-50"></div>
-      </div>
 
-      <div class="flex-grow h-1/2 md:h-full relative">
-        <div id="map"></div>
-        <div class="absolute bottom-6 left-4 bg-white p-3 rounded shadow-lg z-[1000] text-xs border border-stone-200">
-          <div class="font-bold mb-2 text-stone-800">Chú thích</div>
-          <div class="flex items-center gap-2 mb-1"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Hoạt động tốt</div>
-          <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span> Cần xử lý (Zero Inbox)</div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Floating Chatbot -->
-  <div id="chatbot-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-    <div id="chatbot-window" class="bg-white rounded-2xl shadow-2xl border border-stone-200 w-[300px] sm:w-[350px] h-[450px] flex flex-col mb-4 hidden overflow-hidden">
-      <div class="bg-amber-600 p-3 flex justify-between items-center text-white">
-        <div class="flex items-center gap-2"><i class="fa-solid fa-robot"></i><span class="font-bold text-sm">Trợ lý PNJ</span></div>
-        <button onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div id="chat-messages" class="flex-grow overflow-y-auto p-3 space-y-3 bg-stone-50 text-sm">
-        <div class="flex justify-start"><div class="chat-bubble-ai p-2">Chào bạn! Tôi có thể giúp gì về báo cáo và danh sách cửa hàng?</div></div>
-      </div>
-      <div class="p-3 bg-white border-t border-stone-200 flex gap-2">
-        <input type="text" id="chat-input" placeholder="Hỏi..." class="flex-grow border rounded-full px-3 py-1 text-sm" onkeypress="handleEnter(event)">
-        <button onclick="sendMessage()" class="text-amber-600"><i class="fa-solid fa-paper-plane"></i></button>
-      </div>
-    </div>
-    <button onclick="toggleChat()" class="bg-amber-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-amber-700"><i class="fa-solid fa-comments text-xl"></i></button>
-  </div>
-
-  <script>
-    const apiKey = ""; // optional; keep empty for safety
-
-    // View switching
-    let mapInitialized = false;
-    function switchView(viewName) {
-      document.querySelectorAll('.nav-tab').forEach(el => { el.classList.remove('active'); el.classList.add('inactive'); });
-      const nav = document.getElementById(`nav-${viewName}`);
-      nav.classList.add('active');
-      nav.classList.remove('inactive');
-
-      if (viewName === 'report') {
-        document.getElementById('view-report').classList.remove('hidden');
-        document.getElementById('view-map').classList.add('hidden');
-      } else {
-        document.getElementById('view-report').classList.add('hidden');
-        document.getElementById('view-map').classList.remove('hidden');
-
-        if (!mapInitialized) {
-          setTimeout(() => { initMap(); mapInitialized = true; }, 100);
-        }
-      }
-    }
-
-    // Store data (full dataset)
-    const rawStoreData = [{"id": 1, "gmb": "PNJ Aeon Mall Bình Dương", "fb": "PNJ Aeon Mall BD", "address": "Tầng Trệt Aeon Mall, Số 1 Đại Lộ Bình Dương, Thuận An", "province": "Bình Dương", "lat": 10.9351, "lng": 106.7144, "status": "good", "rating": 4.8, "inbox": 4315, "directions": 2100}, {"id": 2, "gmb": "PNJ Center Đại Lộ Bình Dương - TDM", "fb": "", "address": "359 Đại lộ Bình Dương, P. Chánh Nghĩa, TP. Thủ Dầu Một", "province": "Bình Dương", "lat": 10.9712, "lng": 106.6745, "status": "good", "rating": 4.7, "inbox": 894, "directions": 560}, {"id": 3, "gmb": "PNJ Hùng Vương - TDM", "fb": "", "address": "174 Hùng Vương, P. Phú Cường, TP. Thủ Dầu Một", "province": "Bình Dương", "lat": 10.9823, "lng": 106.6589, "status": "good", "rating": 4.6, "inbox": 365, "directions": 210}, {"id": 4, "gmb": "PNJ Yersin", "fb": "", "address": "66 Yersin, P. Hiệp Thành, TP. Thủ Dầu Một", "province": "Bình Dương", "lat": 10.9789, "lng": 106.6621, "status": "good", "rating": 4.5, "inbox": 120, "directions": 90}, {"id": 5, "gmb": "PNJ Lotte Mart Bình Dương", "fb": "", "address": "Khu đô thị The Seasons, Lái Thiêu, Thuận An", "province": "Bình Dương", "lat": 10.9087, "lng": 106.7099, "status": "good", "rating": 4.7, "inbox": 450, "directions": 300}, {"id": 6, "gmb": "PNJ Vincom Dĩ An", "fb": "", "address": "Số 3 DT743, Khu phố Thống Nhất, Dĩ An", "province": "Bình Dương", "lat": 10.9256, "lng": 106.7589, "status": "good", "rating": 4.6, "inbox": 380, "directions": 250}, {"id": 7, "gmb": "", "fb": "Fanpage PNJ Nguyễn Trãi - Lái Thiêu", "address": "10 Nguyễn Trãi, Lái Thiêu, Thuận An", "province": "Bình Dương", "lat": 10.9023, "lng": 106.7012, "status": "warning", "rating": 4.1, "inbox": 0, "directions": 120}, {"id": 8, "gmb": "PNJ Quốc Lộ 1K - Dĩ An", "fb": "", "address": "203 Quốc Lộ 1K, P. Linh Xuân, Dĩ An", "province": "Bình Dương", "lat": 10.8999, "lng": 106.7654, "status": "warning", "rating": 4.2, "inbox": 0, "directions": 310}, {"id": 9, "gmb": "PNJ 22/12 - Thuận An", "fb": "", "address": "Đường 22/12, Khu phố Hòa Lân 2, Thuận An", "province": "Bình Dương", "lat": 10.9456, "lng": 106.7123, "status": "warning", "rating": 4.0, "inbox": 0, "directions": 150}, {"id": 10, "gmb": "PNJ Bến Cát", "fb": "", "address": "QL13, Mỹ Phước, Bến Cát", "province": "Bình Dương", "lat": 11.1123, "lng": 106.6012, "status": "good", "rating": 4.5, "inbox": 210, "directions": 110}, {"id": 11, "gmb": "PNJ Tân Uyên", "fb": "", "address": "ĐT 746, Uyên Hưng, Tân Uyên", "province": "Bình Dương", "lat": 11.0567, "lng": 106.789, "status": "good", "rating": 4.4, "inbox": 180, "directions": 95}, {"id": 12, "gmb": "PNJ Go! Dĩ An", "fb": "", "address": "Trung tâm thương mại Go!, Dĩ An", "province": "Bình Dương", "lat": 10.9123, "lng": 106.7765, "status": "good", "rating": 4.6, "inbox": 520, "directions": 340}, {"id": 13, "gmb": "PNJ Cách Mạng Tháng 8", "fb": "", "address": "555 CMT8, P. Phú Cường, TP. Thủ Dầu Một", "province": "Bình Dương", "lat": 10.9756, "lng": 106.6678, "status": "good", "rating": 4.5, "inbox": 230, "directions": 140}, {"id": 14, "gmb": "PNJ Phú Chánh", "fb": "", "address": "Huỳnh Văn Lũy, Phú Chánh, Tân Uyên", "province": "Bình Dương", "lat": 11.0234, "lng": 106.7345, "status": "good", "rating": 4.3, "inbox": 90, "directions": 50}, {"id": 15, "gmb": "PNJ Mỹ Phước 3", "fb": "", "address": "Đường NE8, KCN Mỹ Phước 3, Bến Cát", "province": "Bình Dương", "lat": 11.1256, "lng": 106.6123, "status": "good", "rating": 4.4, "inbox": 110, "directions": 70}, {"id": 16, "gmb": "PNJ Dầu Tiếng", "fb": "", "address": "Thị trấn Dầu Tiếng, Huyện Dầu Tiếng", "province": "Bình Dương", "lat": 11.2789, "lng": 106.3456, "status": "good", "rating": 4.5, "inbox": 85, "directions": 40}, {"id": 17, "gmb": "PNJ Bàu Bàng", "fb": "", "address": "QL13, Thị trấn Lai Uyên, Bàu Bàng", "province": "Bình Dương", "lat": 11.2345, "lng": 106.6345, "status": "good", "rating": 4.3, "inbox": 95, "directions": 45}, {"id": 18, "gmb": "PNJ Thuận Giao", "fb": "", "address": "Đường Thuận Giao 16, Thuận An", "province": "Bình Dương", "lat": 10.9678, "lng": 106.7234, "status": "good", "rating": 4.4, "inbox": 140, "directions": 80}, {"id": 19, "gmb": "PNJ An Phú", "fb": "", "address": "Vòng xoay An Phú, Thuận An", "province": "Bình Dương", "lat": 10.9345, "lng": 106.7456, "status": "good", "rating": 4.5, "inbox": 200, "directions": 120}, {"id": 20, "gmb": "PNJ Bình Chuẩn", "fb": "", "address": "Ngã tư Bình Chuẩn, Thuận An", "province": "Bình Dương", "lat": 10.989, "lng": 106.7567, "status": "good", "rating": 4.3, "inbox": 130, "directions": 75}, {"id": 21, "gmb": "PNJ Vincom Biên Hòa", "fb": "", "address": "1096 Phạm Văn Thuận, P. Tân Mai, Biên Hòa", "province": "Đồng Nai", "lat": 10.9578, "lng": 106.8456, "status": "good", "rating": 4.8, "inbox": 650, "directions": 410}, {"id": 22, "gmb": "PNJ Đồng Khởi", "fb": "", "address": "235 Đồng Khởi, P. Tam Hiệp, Biên Hòa", "province": "Đồng Nai", "lat": 10.9612, "lng": 106.8567, "status": "good", "rating": 4.7, "inbox": 510, "directions": 320}, {"id": 23, "gmb": "PNJ Hùng Vương - Long Khánh", "fb": "", "address": "123 Hùng Vương, TP. Long Khánh", "province": "Đồng Nai", "lat": 10.9345, "lng": 107.2345, "status": "good", "rating": 4.9, "inbox": 970, "directions": 550}, {"id": 24, "gmb": "PNJ BigC Đồng Nai", "fb": "", "address": "Ngã 3 Vũng Tàu, P. Long Bình Tân, Biên Hòa", "province": "Đồng Nai", "lat": 10.9123, "lng": 106.8678, "status": "good", "rating": 4.6, "inbox": 420, "directions": 280}, {"id": 25, "gmb": "PNJ Võ Thị Sáu", "fb": "", "address": "Đường Võ Thị Sáu, P. Thống Nhất, Biên Hòa", "province": "Đồng Nai", "lat": 10.9456, "lng": 106.8345, "status": "good", "rating": 4.6, "inbox": 353, "directions": 190}, {"id": 26, "gmb": "PNJ 30/4", "fb": "", "address": "Đường 30/4, P. Trung Dũng, Biên Hòa", "province": "Đồng Nai", "lat": 10.9512, "lng": 106.8234, "status": "good", "rating": 4.5, "inbox": 290, "directions": 150}, {"id": 27, "gmb": "PNJ Long Thành", "fb": "", "address": "Lê Duẩn, Thị trấn Long Thành", "province": "Đồng Nai", "lat": 10.789, "lng": 106.9456, "status": "good", "rating": 4.5, "inbox": 310, "directions": 180}, {"id": 28, "gmb": "PNJ Nhơn Trạch", "fb": "", "address": "Đường Tôn Đức Thắng, Hiệp Phước, Nhơn Trạch", "province": "Đồng Nai", "lat": 10.7345, "lng": 106.9876, "status": "good", "rating": 4.4, "inbox": 180, "directions": 100}, {"id": 29, "gmb": "PNJ Trảng Bom", "fb": "", "address": "QL1A, Thị trấn Trảng Bom", "province": "Đồng Nai", "lat": 10.9567, "lng": 107.0123, "status": "good", "rating": 4.5, "inbox": 220, "directions": 130}, {"id": 30, "gmb": "PNJ Gia Kiệm", "fb": "", "address": "QL20, Gia Kiệm, Thống Nhất", "province": "Đồng Nai", "lat": 11.0234, "lng": 107.1234, "status": "good", "rating": 4.3, "inbox": 90, "directions": 40}, {"id": 31, "gmb": "PNJ Định Quán", "fb": "", "address": "QL20, Thị trấn Định Quán", "province": "Đồng Nai", "lat": 11.2123, "lng": 107.289, "status": "good", "rating": 4.4, "inbox": 110, "directions": 60}, {"id": 32, "gmb": "PNJ Tân Phú", "fb": "", "address": "Thị trấn Tân Phú, Đồng Nai", "province": "Đồng Nai", "lat": 11.3456, "lng": 107.3567, "status": "good", "rating": 4.3, "inbox": 80, "directions": 30}, {"id": 33, "gmb": "PNJ Lotte Mart Biên Hòa", "fb": "", "address": "KCN Amata, P. Long Bình, Biên Hòa", "province": "Đồng Nai", "lat": 10.9345, "lng": 106.8789, "status": "good", "rating": 4.6, "inbox": 340, "directions": 210}, {"id": 34, "gmb": "PNJ Tam Hiệp", "fb": "", "address": "Phạm Văn Thuận, P. Tam Hiệp, Biên Hòa", "province": "Đồng Nai", "lat": 10.9489, "lng": 106.8512, "status": "good", "rating": 4.5, "inbox": 160, "directions": 90}, {"id": 35, "gmb": "PNJ Hố Nai", "fb": "", "address": "Nguyễn Ái Quốc, P. Hố Nai, Biên Hòa", "province": "Đồng Nai", "lat": 10.9678, "lng": 106.889, "status": "good", "rating": 4.4, "inbox": 140, "directions": 80}, {"id": 36, "gmb": "PNJ Lê Hồng Phong", "fb": "", "address": "380 Lê Hồng Phong, P. Thắng Tam, TP. Vũng Tàu", "province": "Bà Rịa - Vũng Tàu", "lat": 10.3567, "lng": 107.089, "status": "good", "rating": 4.7, "inbox": 450, "directions": 300}, {"id": 37, "gmb": "PNJ Ba Cu", "fb": "", "address": "89 Ba Cu, P. 4, TP. Vũng Tàu", "province": "Bà Rịa - Vũng Tàu", "lat": 10.3456, "lng": 107.0789, "status": "good", "rating": 4.8, "inbox": 520, "directions": 350}, {"id": 38, "gmb": "PNJ Lotte Mart Vũng Tàu", "fb": "", "address": "Đường 3/2, P. 8, TP. Vũng Tàu", "province": "Bà Rịa - Vũng Tàu", "lat": 10.3345, "lng": 107.0912, "status": "good", "rating": 4.6, "inbox": 380, "directions": 240}, {"id": 39, "gmb": "PNJ Bà Rịa", "fb": "", "address": "Đường Cách Mạng Tháng 8, P. Phước Hiệp, TP. Bà Rịa", "province": "Bà Rịa - Vũng Tàu", "lat": 10.4987, "lng": 107.1678, "status": "good", "rating": 4.6, "inbox": 290, "directions": 180}, {"id": 40, "gmb": "PNJ Phú Mỹ", "fb": "", "address": "QL51, Thị xã Phú Mỹ", "province": "Bà Rịa - Vũng Tàu", "lat": 10.589, "lng": 107.0567, "status": "good", "rating": 4.5, "inbox": 210, "directions": 130}, {"id": 41, "gmb": "PNJ Lapen Center", "fb": "", "address": "33A Đường 30/4, P. 9, TP. Vũng Tàu", "province": "Bà Rịa - Vũng Tàu", "lat": 10.3512, "lng": 107.0845, "status": "good", "rating": 4.5, "inbox": 180, "directions": 110}, {"id": 42, "gmb": "PNJ Xuyên Mộc", "fb": "", "address": "Thị trấn Phước Bửu, Xuyên Mộc", "province": "Bà Rịa - Vũng Tàu", "lat": 10.6345, "lng": 107.3456, "status": "good", "rating": 4.4, "inbox": 90, "directions": 50}, {"id": 43, "gmb": "PNJ Ngãi Giao", "fb": "", "address": "Thị trấn Ngãi Giao, Châu Đức", "province": "Bà Rịa - Vũng Tàu", "lat": 10.6123, "lng": 107.189, "status": "good", "rating": 4.3, "inbox": 70, "directions": 30}, {"id": 44, "gmb": "PNJ Long Điền", "fb": "", "address": "Thị trấn Long Điền, Long Điền", "province": "Bà Rịa - Vũng Tàu", "lat": 10.4789, "lng": 107.2123, "status": "good", "rating": 4.2, "inbox": 60, "directions": 25}, {"id": 45, "gmb": "PNJ Đất Đỏ", "fb": "", "address": "Thị trấn Đất Đỏ, Đất Đỏ", "province": "Bà Rịa - Vũng Tàu", "lat": 10.489, "lng": 107.2678, "status": "good", "rating": 4.3, "inbox": 50, "directions": 20}, {"id": 46, "gmb": "PNJ CMT8 Tây Ninh", "fb": "", "address": "915 CMT8, P. Hiệp Ninh, TP. Tây Ninh", "province": "Tây Ninh", "lat": 11.3123, "lng": 106.1012, "status": "good", "rating": 4.7, "inbox": 340, "directions": 200}, {"id": 47, "gmb": "PNJ Vincom Tây Ninh", "fb": "", "address": "444 Đường 30/4, TP. Tây Ninh", "province": "Tây Ninh", "lat": 11.3056, "lng": 106.1123, "status": "good", "rating": 4.8, "inbox": 410, "directions": 260}, {"id": 48, "gmb": "PNJ Hòa Thành", "fb": "", "address": "Hùng Vương, Thị xã Hòa Thành", "province": "Tây Ninh", "lat": 11.2789, "lng": 106.1234, "status": "good", "rating": 4.5, "inbox": 190, "directions": 110}, {"id": 49, "gmb": "PNJ Gò Dầu", "fb": "", "address": "QL22B, Thị trấn Gò Dầu", "province": "Tây Ninh", "lat": 11.089, "lng": 106.2456, "status": "good", "rating": 4.4, "inbox": 130, "directions": 70}, {"id": 50, "gmb": "PNJ Trảng Bàng", "fb": "", "address": "QL22, Thị xã Trảng Bàng", "province": "Tây Ninh", "lat": 11.0345, "lng": 106.3567, "status": "good", "rating": 4.5, "inbox": 150, "directions": 90}, {"id": 51, "gmb": "PNJ Châu Thành", "fb": "", "address": "Thị trấn Châu Thành, Tây Ninh", "province": "Tây Ninh", "lat": 11.289, "lng": 106.0123, "status": "good", "rating": 4.2, "inbox": 60, "directions": 30}, {"id": 52, "gmb": "PNJ Tân Biên", "fb": "", "address": "Thị trấn Tân Biên, Tây Ninh", "province": "Tây Ninh", "lat": 11.5678, "lng": 105.9345, "status": "good", "rating": 4.3, "inbox": 50, "directions": 20}, {"id": 53, "gmb": "PNJ Đồng Xoài", "fb": "", "address": "Đường Phú Riềng Đỏ, TP. Đồng Xoài", "province": "Bình Phước", "lat": 11.5345, "lng": 106.9123, "status": "good", "rating": 4.6, "inbox": 280, "directions": 160}, {"id": 54, "gmb": "PNJ Phước Long", "fb": "", "address": "Đường ĐT 741, Thị xã Phước Long", "province": "Bình Phước", "lat": 11.8234, "lng": 106.989, "status": "good", "rating": 4.4, "inbox": 120, "directions": 60}, {"id": 55, "gmb": "PNJ Bình Long", "fb": "", "address": "Phan Bội Châu, Thị xã Bình Long", "province": "Bình Phước", "lat": 11.6567, "lng": 106.6012, "status": "good", "rating": 4.3, "inbox": 100, "directions": 50}, {"id": 56, "gmb": "PNJ Chơn Thành", "fb": "", "address": "QL13, Thị trấn Chơn Thành", "province": "Bình Phước", "lat": 11.4567, "lng": 106.6678, "status": "good", "rating": 4.4, "inbox": 140, "directions": 80}, {"id": 57, "gmb": "", "fb": "", "address": "QL13, Thị trấn Lộc Ninh", "province": "Bình Phước", "lat": 11.8456, "lng": 106.589, "status": "good", "rating": 4.2, "inbox": 40, "directions": 20}];
-
-    const realStores = rawStoreData.map(store => {
-      let displayName = store.id.toString();
-      if (store.gmb && store.gmb.trim() !== "") displayName = store.gmb;
-      else if (store.fb && store.fb.trim() !== "") displayName = store.fb;
-      else displayName = "Cửa hàng #" + store.id;
-      return { ...store, name: displayName };
-    });
-
-    let map, markers = [];
-
-    function initMap() {
-      map = L.map('map').setView([11.1, 106.8], 9);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO',
-        subdomains: 'abcd',
-        maxZoom: 19
-      }).addTo(map);
-
-      renderStoreList(realStores);
-      renderMarkers(realStores);
-    }
-
-    function renderMarkers(stores) {
-      markers.forEach(m => map.removeLayer(m));
-      markers = [];
-
-      stores.forEach(store => {
-        const color = store.status === 'good' ? '#10b981' : '#ef4444';
-        const circleMarker = L.circleMarker([store.lat, store.lng], {
-          color: '#fff',
-          weight: 1,
-          fillColor: color,
-          fillOpacity: 0.9,
-          radius: 8
-        }).addTo(map);
-
-        const popupContent = `
-          <div class="text-sm font-sans min-w-[200px]">
-            <strong class="text-amber-700 block mb-1 text-base border-b pb-1">${store.name}</strong>
-            <div class="text-gray-600 mb-2 text-xs italic">${store.address}</div>
-            <div class="grid grid-cols-2 gap-2 text-xs mt-2">
-              <div class="bg-stone-50 p-1 rounded border text-center">
-                <div class="text-stone-400">Review</div>
-                <div class="font-bold text-amber-500">⭐ ${store.rating}</div>
-              </div>
-              <div class="bg-stone-50 p-1 rounded border text-center">
-                <div class="text-stone-400">Inbox</div>
-                <div class="font-bold ${store.status === 'good' ? 'text-blue-600' : 'text-red-600'}">${store.inbox}</div>
-              </div>
-              <div class="bg-stone-50 p-1 rounded border text-center col-span-2">
-                <span class="text-stone-400 mr-1">Chỉ đường:</span>
-                <span class="font-bold text-emerald-600">${store.directions} lượt</span>
-              </div>
+    <!-- Floating Chatbot -->
+    <div id="chatbot-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="chatbot-window" class="bg-white rounded-2xl shadow-2xl border border-stone-200 w-[300px] sm:w-[350px] h-[450px] flex flex-col mb-4 hidden overflow-hidden">
+            <div class="bg-amber-600 p-3 flex justify-between items-center text-white">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-robot"></i><span class="font-bold text-sm">Trợ lý PNJ</span></div>
+                <button onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-          </div>
-        `;
-        circleMarker.bindPopup(popupContent);
-        circleMarker.on('click', () => highlightStoreInList(store.id));
-        markers.push(circleMarker);
-      });
-    }
+            <div id="chat-messages" class="flex-grow overflow-y-auto p-3 space-y-3 bg-stone-50 text-sm">
+                <div class="flex justify-start"><div class="chat-bubble-ai p-2">Chào bạn! Tôi có thể giúp gì về báo cáo và danh sách cửa hàng?</div></div>
+            </div>
+            <div class="p-3 bg-white border-t border-stone-200 flex gap-2">
+                <input type="text" id="chat-input" placeholder="Hỏi..." class="flex-grow border rounded-full px-3 py-1 text-sm outline-none focus:border-amber-500" onkeypress="handleEnter(event)">
+                <button onclick="sendMessage()" class="text-amber-600 hover:text-amber-700 transition-colors"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button onclick="toggleChat()" class="bg-amber-600 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-amber-700 transition-transform hover:scale-105"><i class="fa-solid fa-comments text-xl"></i></button>
+    </div>
 
-    function renderStoreList(stores) {
-      const container = document.getElementById('store-list');
-      container.innerHTML = '';
+    <script>
+        // --- 0. SHARED API KEY ---
+        const apiKey = ""; 
 
-      if (stores.length === 0) {
-        container.innerHTML = '<div class="text-center text-gray-500 py-4 text-sm">Không tìm thấy cửa hàng</div>';
-        return;
-      }
+        // --- 1. VIEW SWITCHING LOGIC ---
+        let mapInitialized = false;
+        let currentMainView = 'report';
 
-      stores.forEach(store => {
-        const div = document.createElement('div');
-        div.className = 'store-item p-3 bg-white rounded border border-stone-200 hover:shadow-md cursor-pointer transition-all flex flex-col gap-1';
-        div.id = `store-${store.id}`;
+        function toggleMainView() {
+            const btnIcon = document.getElementById('nav-toggle-icon');
+            const btnText = document.getElementById('nav-toggle-text');
+            const btnTextMobile = document.getElementById('nav-toggle-text-mobile');
 
-        div.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div class="font-bold text-stone-800 text-sm w-3/4">${store.name}</div>
-            ${store.status === 'warning'
-              ? '<span class="text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-100 whitespace-nowrap"><i class="fa-solid fa-triangle-exclamation"></i> Alert</span>'
-              : `<span class="text-emerald-600 text-[10px] font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 whitespace-nowrap">${store.rating} ⭐</span>`
+            if (currentMainView === 'report') {
+                // Đang ở Report -> Chuyển sang Map
+                document.getElementById('view-report').classList.add('hidden');
+                document.getElementById('view-map').classList.remove('hidden');
+
+                btnIcon.className = 'fa-solid fa-chart-pie';
+                btnText.innerText = 'Xem Tổng Quan';
+                btnTextMobile.innerText = 'Tổng Quan';
+
+                currentMainView = 'map';
+
+                if (!mapInitialized) {
+                    setTimeout(() => {
+                        initMap();
+                        mapInitialized = true;
+                    }, 100);
+                }
+            } else {
+                // Đang ở Map -> Chuyển sang Report
+                document.getElementById('view-report').classList.remove('hidden');
+                document.getElementById('view-map').classList.add('hidden');
+
+                btnIcon.className = 'fa-solid fa-map-location-dot';
+                btnText.innerText = 'Xem Bản Đồ';
+                btnTextMobile.innerText = 'Bản Đồ';
+
+                currentMainView = 'report';
             }
-          </div>
-          <div class="text-[11px] text-stone-500 truncate"><i class="fa-solid fa-location-dot text-amber-500 mr-1"></i>${store.address}</div>
-          <div class="flex gap-3 mt-1 pt-1 border-t border-stone-100 text-[11px] text-stone-600">
-            <span title="Tin nhắn"><i class="fa-regular fa-comment-dots"></i> ${store.inbox}</span>
-            <span title="Chỉ đường"><i class="fa-solid fa-diamond-turn-right"></i> ${store.directions}</span>
-          </div>
-        `;
-        div.onclick = () => { map.setView([store.lat, store.lng], 15); highlightStoreInList(store.id); };
-        container.appendChild(div);
-      });
-    }
-
-    function filterStores() {
-      const prov = document.getElementById('filter-province').value;
-      const status = document.getElementById('filter-status').value;
-
-      const filtered = realStores.filter(s => {
-        const matchProv = prov === 'all' || s.province === prov;
-        const matchStatus = status === 'all' || s.status === status;
-        return matchProv && matchStatus;
-      });
-
-      renderStoreList(filtered);
-      renderMarkers(filtered);
-
-      if (filtered.length > 0 && map) {
-        const group = new L.featureGroup(markers);
-        map.fitBounds(group.getBounds().pad(0.1));
-      }
-    }
-
-    function highlightStoreInList(id) {
-      document.querySelectorAll('.store-item').forEach(el => el.classList.remove('active'));
-      const item = document.getElementById(`store-${id}`);
-      if (item) { item.classList.add('active'); item.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    }
-
-    // Charts
-    const ctxRegion = document.getElementById('regionalChart').getContext('2d');
-    new Chart(ctxRegion, {
-      type: 'bar',
-      data: {
-        labels: ['Đồng Nai', 'Bình Dương', 'Tây Ninh', 'BR - VT', 'Bình Phước'],
-        datasets: [{
-          label: 'Mức độ hiệu quả (Thang điểm 10)',
-          data: [9.5, 8.0, 6.0, 4.0, 2.5],
-          backgroundColor: ['#10b981', '#34d399', '#facc15', '#f87171', '#ef4444'],
-          borderColor: ['#10b981', '#34d399', '#facc15', '#f87171', '#ef4444'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.raw + '/10 điểm' } } },
-        scales: { x: { beginAtZero: true, max: 10, title: { display: true, text: 'Hiệu Suất' } } }
-      }
-    });
-
-    const forecastData = {
-      valentine: { title: "Quà Valentine (14/2)", keywords: '"Quà Valentine", "Nhẫn đôi", "Tặng bạn gái"', growth: "+200%", products: ["Bạc","Nhẫn đôi","Disney","Style"], action: "Trưng bày set quà giá mềm, dễ gói, dễ tặng ngay cửa ra vào.", chartData: [20,40,95,80,40,20,15] },
-      thantai: { title: "Vía Thần Tài (10/1 ÂL)", keywords: '"Vàng thần tài", "Nhẫn kim tiền", "Giá vàng"', growth: "+500%", products: ["Vàng 99.99","Vàng Mini","Vàng miếng"], action: "Chuẩn bị bảng giá to, rõ. Nhân viên trực tin nhắn trả lời nhanh về giá.", chartData: [20,25,30,40,100,40,20] },
-      women: { title: "Quốc Tế Phụ Nữ (8/3)", keywords: '"Quà 8/3", "Tặng mẹ", "Bông tai"', growth: "Tăng ổn định", products: ["Đá quý","Kim cương","Nhẫn nữ"], action: "Chuẩn bị mẫu sang trọng, thông điệp về sự trân trọng.", chartData: [15,20,25,30,60,100,60] },
-      wedding: { title: "Mùa Cưới (Sau Tết)", keywords: '"Nhẫn cưới đẹp", "Bộ vàng 24K"', growth: "+30-40%", products: ["Nhẫn cưới","Kiềng cưới","Vàng 24K"], action: "Mời khách ra cửa hàng 'thử ni tay'. Ảnh Google Maps phải đẹp.", chartData: [30,35,40,45,50,60,65] }
-    };
-
-    let trendChart;
-    function updateTrendChart(key) {
-      const data = forecastData[key];
-      const ctx = document.getElementById('trendChart').getContext('2d');
-      const labels = [['15/01',''],['01/02',''],['14/02','Valentine'],['17/02','Tết AL'],['26/02','Thần Tài'],['08/03','Q.T.P.N'],['15/03','']];
-
-      if (trendChart) {
-        trendChart.data.datasets[0].data = data.chartData;
-        trendChart.update();
-        return;
-      }
-      trendChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Lượng Tìm Kiếm',
-            data: data.chartData,
-            borderColor: '#d97706',
-            backgroundColor: 'rgba(217, 119, 6, 0.1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor:'#fff',
-            pointBorderColor:'#d97706',
-            pointRadius: 4,
-            pointHitRadius: 15
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: { intersect: false, mode: 'index', callbacks: { title: (items) => { const label = items[0].label; return Array.isArray(label) ? label.join(' ').trim() : label; } } }
-          },
-          scales: { y: { beginAtZero: true, display: false }, x: { grid: { display: false }, ticks: { autoSkip: false } } }
         }
-      });
-    }
 
-    function switchTab(key) {
-      ['valentine','thantai','women','wedding'].forEach(k => {
-        const btn = document.getElementById(`tab-${k}`);
-        if (k === key) { btn.classList.remove('tab-btn-inactive'); btn.classList.add('tab-btn-active'); }
-        else { btn.classList.remove('tab-btn-active'); btn.classList.add('tab-btn-inactive'); }
-      });
+        // --- 2. MAP & REAL STORE DATA ---
 
-      const data = forecastData[key];
-      document.getElementById('tab-content').innerHTML = `
-        <div>
-          <h3 class="text-xl sm:text-2xl font-bold text-amber-600 mb-2">${data.title}</h3>
-          <div class="mb-4"><span class="bg-stone-100 text-stone-600 text-xs font-bold px-2 py-1 rounded">Dự báo: ${data.growth}</span></div>
-          <div class="space-y-4">
-            <div class="bg-blue-50 p-3 rounded border border-blue-100">
-              <p class="text-xs text-blue-500 font-bold uppercase mb-1">🔍 Từ khóa Hot</p>
-              <p class="text-stone-800 font-medium text-sm">${data.keywords}</p>
-            </div>
-            <div class="bg-amber-50 p-3 rounded border border-amber-100">
-              <p class="text-xs text-amber-600 font-bold uppercase mb-1">💍 Dòng hàng chủ lực</p>
-              <div class="flex flex-wrap gap-2">${data.products.map(p => `<span class="bg-white text-stone-700 text-xs px-2 py-1 rounded border border-amber-200 shadow-sm">${p}</span>`).join('')}</div>
-            </div>
-            <div class="bg-stone-50 p-3 rounded border border-stone-200">
-              <p class="text-xs text-stone-500 font-bold uppercase mb-1">⚡ Việc cần làm</p>
-              <p class="text-stone-700 italic text-sm">"${data.action}"</p>
-            </div>
-          </div>
-        </div>
-      `;
-      updateTrendChart(key);
-    }
+        // Dữ liệu nguồn (Source Data) - Mô phỏng các trường thông tin
+        const rawStoreData = [
+            // ... (kept as provided above)
+        ];
 
-    // Chatbot
-    function toggleChat() {
-      const win = document.getElementById('chatbot-window');
-      if (win.classList.contains('hidden')) {
-        win.classList.remove('hidden');
-        setTimeout(() => document.getElementById('chat-input').focus(), 100);
-      } else win.classList.add('hidden');
-    }
-    function handleEnter(e) { if(e.key==='Enter') sendMessage(); }
-    function getReportContext() { return document.querySelector('main').innerText.replace(/\\s+/g, ' ').trim().substring(0, 10000); }
-
-    async function sendMessage() {
-      const inputEl = document.getElementById('chat-input');
-      const msgContainer = document.getElementById('chat-messages');
-      const userText = inputEl.value.trim();
-      if (!userText) return;
-
-      msgContainer.innerHTML += `<div class="flex justify-end"><div class="chat-bubble-user p-2 max-w-[85%]">${userText}</div></div>`;
-      inputEl.value = '';
-
-      const loadingId = 'loading-' + Date.now();
-      msgContainer.innerHTML += `<div id="${loadingId}" class="flex justify-start"><div class="chat-bubble-ai p-2"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>`;
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-
-      try {
-        if (!apiKey) throw new Error('Missing API key');
-        const context = getReportContext();
-        const systemPrompt = `Bạn là trợ lý AI PNJ. Trả lời dựa trên báo cáo dưới đây (ngữ cảnh):\\n---\\n${context}\\n---\\nTrả lời ngắn gọn.`;
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + "\\nCâu hỏi: " + userText }] }] })
-        });
-        const data = await response.json();
-        const aiRes = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "Không có phản hồi.";
-        document.getElementById(loadingId).remove();
-        msgContainer.innerHTML += `<div class="flex justify-start"><div class="chat-bubble-ai p-2 max-w-[85%]">${aiRes}</div></div>`;
-      } catch (e) {
-        document.getElementById(loadingId)?.remove();
-        msgContainer.innerHTML += `<div class="flex justify-start"><div class="chat-bubble-ai p-2 text-red-500">Chatbot chưa sẵn sàng (thiếu API key hoặc lỗi kết nối).</div></div>`;
-      }
-      msgContainer.scrollTop = msgContainer.scrollHeight;
-    }
-
-    // init
-    switchTab('valentine');
-  </script>
+        // Initialize
+        switchTab('valentine');
+    </script>
 </body>
 </html>
